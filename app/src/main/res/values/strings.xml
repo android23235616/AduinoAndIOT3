@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">AduinoAndIOT</string>
+    <string name="title_activity_paired_devices">PairedDevices</string>
+</resources>
