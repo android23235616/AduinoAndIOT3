@@ -47,7 +47,6 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Initialise();
-
         try {
             SetUpConnectionSocket();
         } catch (IOException e) {
@@ -55,6 +54,7 @@ public class MainActivity extends AppCompatActivity {
             Display(e.toString()+"\n"+"Error in connecting to Bluetooth Socket!");
         }
         getValueFromDataBase();
+
     }
 
     private void getValueFromDataBase(){
@@ -98,6 +98,7 @@ public class MainActivity extends AppCompatActivity {
                         } catch (IOException e) {
                             e.printStackTrace();
                             Display(e.toString()+"\n"+"The  requested device doesn't have the desired service!");
+
                            handler.post(new Runnable() {
                                @Override
                                public void run() {
@@ -129,7 +130,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void Display(final String msg){
-        new Handler().post(new Runnable() {
+        handler.post(new Runnable() {
             @Override
             public void run() {
                 Toast.makeText(MainActivity.this,msg,Toast.LENGTH_SHORT).show();
@@ -147,7 +148,7 @@ public class MainActivity extends AppCompatActivity {
         value = (TextView)findViewById(R.id.value);
         Dialog = ProgressDialog.show(this,"Connecting","Please Wait");
         handler = new Handler();
-      sharedPreferences = getSharedPreferences(new Constants().sharedPreferenceConstant, Context.MODE_PRIVATE);
+       sharedPreferences = getSharedPreferences(new Constants().sharedPreferenceConstant, Context.MODE_PRIVATE);
        // Display(address);
         name = sharedPreferences.getString("name","");
     }

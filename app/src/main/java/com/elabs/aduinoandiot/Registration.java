@@ -41,16 +41,14 @@ public class Registration extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_registration);
         Initialise();
-        if(!checkForRegistration()){
-            Display("This may take a while!!");
-        }
+
         Profile TestProfile = new Profile("Fake Profile", "Fake Password", 0);
         setUpFirebase(TestProfile);
 
         valueEventListener = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                dialog.cancel();
+              dialog.cancel();
                 checkSnapshot = dataSnapshot;
                 if (flag == 0 && flag2 == 0 ){
                     Display("Registered");
@@ -130,7 +128,11 @@ public class Registration extends AppCompatActivity {
         constants = new Constants();
         sharedPreferences = getSharedPreferences(constants.sharedPreferenceConstant, Context.MODE_PRIVATE);
         editor = sharedPreferences.edit();
+
         handler = new Handler();
+        if(!checkForRegistration()){
+            Display("This may take a while!!");
+        }
         dialog  =  ProgressDialog.show(this,"Connecting","Please Wait");
     }
 
@@ -140,10 +142,20 @@ public class Registration extends AppCompatActivity {
     }
 
     private void setUpFirebase(Profile p1){
-      //  databaseReference = FirebaseDatabase.getInstance().getReference("Profile");
 
-       // databaseReference.setValue(p1.getId());
         databaseReference.child(p1.getId()).setValue(p1);
 
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        dialog.dismiss();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        dialog.dismiss();
     }
 }

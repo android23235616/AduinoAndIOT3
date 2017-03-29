@@ -2,6 +2,7 @@ package com.elabs.aduinoandiot;
 
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.design.widget.FloatingActionButton;
@@ -35,13 +36,49 @@ public class PairedDevices extends AppCompatActivity {
         try{
             Initialise();
            // deviceDetails.add("gandu");
-
-        getPairedDevices();
+            adapter=BluetoothAdapter.getDefaultAdapter();
+            checkBluetoothConnection(adapter);
 
         }catch (Exception e){
              Display(e.toString());
         }
 
+    }
+
+    private void checkBluetoothConnection(BluetoothAdapter adapter1) throws Exception {
+    if(adapter1==null)
+    {
+        Toast.makeText(this, "No Bluetooth", Toast.LENGTH_SHORT).show();
+
+    }
+    else
+    {
+        if(!adapter1.isEnabled())
+        {
+            Intent i=new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
+            startActivityForResult(i,13);
+        }
+        else {
+            getPairedDevices();
+        }
+    }
+
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if(requestCode==13)
+        {
+            if(resultCode==RESULT_OK)
+            {
+                Toast.makeText(this, "Turned on", Toast.LENGTH_SHORT).show();
+                try {
+                    getPairedDevices();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }
     }
 
     private void Initialise() throws Exception{
@@ -63,7 +100,6 @@ public class PairedDevices extends AppCompatActivity {
         }
         pairedDevicesAdapter.context=PairedDevices.this;
         pairedDevicesAdapter devicesAdapter = new pairedDevicesAdapter(deviceDetails);
-
         final LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
