@@ -6,10 +6,12 @@ import android.bluetooth.BluetoothSocket;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Typeface;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -64,7 +66,7 @@ public class MainActivity extends AppCompatActivity {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 Display("Data has changed");
                 Profile p = dataSnapshot.child(name).getValue(Profile.class);
-                value.setText("The value is "+p.getValue());
+                value.setText("T h e  v a l u e  i s  "+p.getValue());
               try {
                     sendData(p.getValue());
                 } catch (IOException e) {
@@ -147,6 +149,11 @@ public class MainActivity extends AppCompatActivity {
         address = getdata.getStringExtra("mac");
         value = (TextView)findViewById(R.id.value);
         Dialog = ProgressDialog.show(this,"Connecting","Please Wait");
+        View v = LayoutInflater.from(this).inflate(R.layout.progress,null);
+        TextView progress_id = (TextView)v.findViewById(R.id.progress_id);
+        Typeface as=Typeface.createFromAsset(getAssets(),"android.ttf");
+        progress_id.setTypeface(as);
+        Dialog.setContentView(v);
         handler = new Handler();
        sharedPreferences = getSharedPreferences(new Constants().sharedPreferenceConstant, Context.MODE_PRIVATE);
        // Display(address);

@@ -3,6 +3,7 @@ package com.elabs.aduinoandiot;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.content.Intent;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.design.widget.FloatingActionButton;
@@ -14,7 +15,9 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Display;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -84,6 +87,11 @@ public class PairedDevices extends AppCompatActivity {
     private void Initialise() throws Exception{
         recyclerView=(RecyclerView)findViewById(R.id.pairedDevices);
         adapter = BluetoothAdapter.getDefaultAdapter();
+
+       // View v= LayoutInflater.from(this).inflate(R.layout.content_paired_devices,null);
+        Typeface as=Typeface.createFromAsset(getAssets(),"android.ttf");
+        TextView fd=(TextView)findViewById(R.id.fcuk_recycle);
+        fd.setTypeface(as);
     }
 
 

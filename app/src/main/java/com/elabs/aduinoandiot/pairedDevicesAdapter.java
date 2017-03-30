@@ -2,6 +2,7 @@ package com.elabs.aduinoandiot;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Typeface;
 import android.os.Handler;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -68,6 +69,8 @@ public class pairedDevicesAdapter extends RecyclerView.Adapter<pairedDevicesAdap
         public innerViewHolder(View itemView) {
             super(itemView);
             deviceText = (TextView) itemView.findViewById(R.id.items);
+            Typeface as=Typeface.createFromAsset(itemView.getContext().getAssets(),"android.ttf");
+            deviceText.setTypeface(as);
         }
     }
 }

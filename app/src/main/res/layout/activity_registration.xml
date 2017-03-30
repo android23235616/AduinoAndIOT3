@@ -1,36 +1,82 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:background="#F44336"
+
     tools:context="com.elabs.aduinoandiot.Registration">
 
     <EditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="20dp"
-        android:layout_margin="10dp"
+        android:padding="15dp"
+        android:layout_marginLeft="20dp"
         android:hint="Username: "
-        android:id="@+id/username"/>
+        android:layout_marginRight="20dp"
+        android:gravity="center"
+        android:textColorHint="#ffffff"
+        android:background="@drawable/button2"
+        android:textSize="25dp"
+        android:textColor="#ffffff"
+        android:id="@+id/username"
+        android:layout_marginBottom="15dp"
+        android:layout_above="@+id/password"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
 
     <EditText
+        android:background="@drawable/button2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="20dp"
+        android:textStyle="bold"
         android:inputType="textPassword"
-        android:layout_margin="10dp"
         android:hint="Password: "
-        android:id="@+id/password"/>
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:textColorHint="#ffffff"
+        android:id="@+id/password"
+        android:gravity="center"
+        android:textColor="#FFFFFF"
+        android:layout_above="@+id/submit"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginBottom="93dp" />
 
     <Button
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:id="@+id/submit"
+        android:text="Submit"
+
         android:padding="20dp"
-        android:text="SUBMIT"
-        android:layout_margin="10dp"
+        android:background="@drawable/my_button"
+        android:layout_width="match_parent"
+        android:textColor="#FFFFFF"
+        android:textSize="20dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_height="wrap_content"
+       android:layout_marginBottom="30dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
 
-        android:id="@+id/submit"/>
+    <TextView
+        android:id="@+id/fcuk"
+        android:textColor="#FFFFFF"
+        android:textSize="45dp"
+        android:textStyle="bold"
+        android:fontFamily="casual"
+        android:gravity="center"
+        android:padding="10dp"
+        android:background="@color/colorPrimaryDark"
+        android:layout_width="match_parent"
+        android:layout_height="400dp"
+        android:layout_above="@+id/username"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="143dp"
+        android:text="Android+IOT" />
 
-</LinearLayout>
+</RelativeLayout>

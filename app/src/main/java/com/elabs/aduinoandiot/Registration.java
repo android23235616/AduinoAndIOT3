@@ -4,14 +4,19 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
+import android.graphics.Typeface;
+import android.graphics.drawable.Drawable;
 import android.os.Handler;
 import android.provider.Settings;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.database.ChildEventListener;
@@ -23,6 +28,7 @@ import com.google.firebase.database.ValueEventListener;
 
 public class Registration extends AppCompatActivity {
 
+    TextView type;
     EditText Username, password;
     Constants constants;
     Button submit;
@@ -41,7 +47,7 @@ public class Registration extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_registration);
         Initialise();
-
+        setTypeFace();
         Profile TestProfile = new Profile("Fake Profile", "Fake Password", 0);
         setUpFirebase(TestProfile);
 
@@ -115,6 +121,14 @@ public class Registration extends AppCompatActivity {
         super.onStop();
         databaseReference.removeEventListener(valueEventListener);
     }
+    private void setTypeFace()
+    {
+         Typeface as=Typeface.createFromAsset(getAssets(),"android.ttf");
+        type.setTypeface(as);
+        Username.setTypeface(as);
+        password.setTypeface(as);
+        submit.setTypeface(as);
+    }
 /*
 * forEach {
 *
@@ -128,12 +142,18 @@ public class Registration extends AppCompatActivity {
         constants = new Constants();
         sharedPreferences = getSharedPreferences(constants.sharedPreferenceConstant, Context.MODE_PRIVATE);
         editor = sharedPreferences.edit();
-
+        type= (TextView) findViewById(R.id.fcuk);
         handler = new Handler();
         if(!checkForRegistration()){
             Display("This may take a while!!");
         }
+
         dialog  =  ProgressDialog.show(this,"Connecting","Please Wait");
+        View v = LayoutInflater.from(this).inflate(R.layout.progress,null);
+        TextView progress_id = (TextView)v.findViewById(R.id.progress_id);
+        Typeface as=Typeface.createFromAsset(getAssets(),"android.ttf");
+        progress_id.setTypeface(as);
+        dialog.setContentView(v);
     }
 
     private void Display(String s){

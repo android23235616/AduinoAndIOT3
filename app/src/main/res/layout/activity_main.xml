@@ -1,23 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<FrameLayout
+    android:background="@color/background"
     android:orientation="vertical"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
+    android:layout_weight="1"
     android:layout_height="match_parent"
     tools:context="com.elabs.aduinoandiot.MainActivity">
 
     <TextView
-        android:padding="20dp"
+
+        android:textColor="#ffffff"
+       android:layout_gravity="center"
+        android:padding="35dp"
         android:textStyle="bold"
+        android:background="@drawable/button3"
         android:textSize="30dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text=""
+        android:text="T h e  v a l u e  i s   0"
         android:id="@+id/value"
      />
 
 
 
-</LinearLayout>
+</FrameLayout>
