@@ -1,4 +1,28 @@
 <resources>
     <string name="app_name">AduinoAndIOT</string>
     <string name="title_activity_paired_devices">PairedDevices</string>
+    <string name="step1">
+
+        1. Go to Settings > Bluetooth\n
+        2. Pair with your Bluetooth Module (HC-05, HC-06 etc)
+    </string>
+
+    <string name="step2">
+        1. On The Next Page. Register With your Username And Password.\n
+        2. Remember this Username and Password.\n
+        3. Click On Register.\n
+    </string>
+
+    <string name="step3">
+        1. You Will Be Able to See a List Of Paired Devices.\n
+        2. Click On Your Bluetooth Module.\n
+        3. The Screen Now showing, will display the value That You Will Enter remotely. Inital Value is 0.\n
+    </string>
+
+    <string name="step4">
+        1. Go to http://elabsiot.000webhostapp.com/ on your browser.
+        \n2. Enter the same username and password(Case Sensitive) and hit VERIFY.\n
+        3. A textField will open. Enter Your desired Value that you want to transmit.\n
+
+    </string>
 </resources>

@@ -1,9 +1,154 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView android:layout_height="match_parent" android:layout_width="match_parent"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:background="@color/background">
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
     tools:context="com.elabs.aduinoandiot.BufferActivity">
 
-</android.support.constraint.ConstraintLayout>
+
+    <TextView android:id="@+id/tutorial"
+        android:textColor="#FFFFFF"
+        android:textSize="45dp"
+        android:typeface="serif"
+        android:gravity="center"
+        android:padding="10dp"
+        android:background="@color/colorPrimaryDark"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:layout_centerHorizontal="true"
+        android:fontFamily="casual"
+        android:textStyle="bold"
+        android:text="Tutorial"
+        xmlns:android="http://schemas.android.com/apk/res/android" />
+
+
+    <TextView
+        android:id="@+id/text1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="#ffffff"
+        android:textSize="25dp"
+        android:padding="10dp"
+        android:textStyle="bold"
+        android:gravity="center"
+        android:fontFamily="casual"
+        android:text="S t e p  1 :"/>
+
+    <TextView
+        android:id="@+id/text2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="#ffffff"
+        android:textSize="15dp"
+        android:padding="10dp"
+        android:textStyle="bold"
+        android:gravity="center"
+        android:fontFamily="casual"
+        android:text="@string/step1"/>
+
+    <TextView
+        android:id="@+id/text3"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="#ffffff"
+        android:textSize="25dp"
+        android:padding="10dp"
+        android:textStyle="bold"
+        android:gravity="center"
+        android:fontFamily="casual"
+        android:text="S t e p  2 :"/>
+
+    <TextView
+        android:id="@+id/text4"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="#ffffff"
+        android:textSize="15dp"
+        android:padding="10dp"
+        android:textStyle="bold"
+        android:gravity="center"
+        android:fontFamily="casual"
+        android:text="@string/step2"/>
+
+    <TextView
+        android:id="@+id/text5"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="#ffffff"
+        android:textSize="25dp"
+        android:padding="10dp"
+        android:textStyle="bold"
+        android:gravity="center"
+        android:fontFamily="casual"
+        android:text="S t e p  3 :"/>
+
+
+    <TextView
+        android:id="@+id/text6"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="#ffffff"
+        android:textSize="15dp"
+        android:padding="10dp"
+        android:textStyle="bold"
+        android:gravity="center"
+        android:fontFamily="casual"
+        android:text="@string/step3"/>
+
+    <TextView
+        android:id="@+id/text7"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="#ffffff"
+        android:textSize="25dp"
+        android:padding="10dp"
+        android:textStyle="bold"
+        android:gravity="center"
+        android:fontFamily="casual"
+        android:text="S t e p  4 :"/>
+
+    <TextView
+        android:id="@+id/text8"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textColor="#ffffff"
+        android:textSize="15dp"
+        android:padding="10dp"
+        android:textStyle="bold"
+        android:gravity="center"
+        android:fontFamily="casual"
+        android:text="@string/step4"/>
+
+    <Button
+        android:id="@+id/nxt_page"
+        android:text="Registration"
+        android:padding="20dp"
+        android:background="@drawable/my_button"
+        android:layout_width="match_parent"
+        android:textColor="#FFFFFF"
+        android:textSize="20dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="30dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+    <CheckBox
+        android:layout_marginLeft="30dp"
+        android:layout_width="wrap_content"
+        android:checked="false"
+        android:id="@+id/checker"
+        android:text="Never Show Again"
+        android:textColor="#ffffff"
+        android:textStyle="bold"
+        android:layout_height="wrap_content" />
+</LinearLayout>
+</ScrollView>

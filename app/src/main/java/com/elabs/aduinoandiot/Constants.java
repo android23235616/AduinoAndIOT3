@@ -7,4 +7,5 @@ package com.elabs.aduinoandiot;
 public class Constants {
 
     public final static String sharedPreferenceConstant  ="b89787**)hkkjhk";
+    public final static String sharedPrefernce2 = "876jadajsh";
 }
