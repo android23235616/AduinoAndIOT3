@@ -43,6 +43,7 @@ public class pairedDevicesAdapter extends RecyclerView.Adapter<pairedDevicesAdap
                i.putExtra("mac",deviceDetails.get(holder.getAdapterPosition()).substring(0,17));
                 v.getContext().startActivity(i);
                 new PairedDevices().finish();
+
             }
         });
       Log.i("info23235616",""+deviceDetails.get(position));

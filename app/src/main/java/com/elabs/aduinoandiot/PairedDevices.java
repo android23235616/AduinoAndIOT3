@@ -2,7 +2,9 @@ package com.elabs.aduinoandiot;
 
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Handler;
@@ -30,6 +32,8 @@ public class PairedDevices extends AppCompatActivity {
     BluetoothAdapter adapter;
     Set<BluetoothDevice> devices;
     List<String> deviceDetails = new ArrayList<>();
+    SharedPreferences sharedPreferences;
+    SharedPreferences.Editor editor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,6 +43,11 @@ public class PairedDevices extends AppCompatActivity {
         try{
             Initialise();
            // deviceDetails.add("gandu");
+            if(!isRegistered()){
+                editor.putBoolean("register",true);
+                editor.apply();
+                recreate();
+            }
             adapter=BluetoothAdapter.getDefaultAdapter();
             checkBluetoothConnection(adapter);
 
@@ -84,6 +93,10 @@ public class PairedDevices extends AppCompatActivity {
         }
     }
 
+    private boolean isRegistered(){
+        return sharedPreferences.getBoolean("register",false);
+    }
+
     private void Initialise() throws Exception{
         recyclerView=(RecyclerView)findViewById(R.id.pairedDevices);
         adapter = BluetoothAdapter.getDefaultAdapter();
@@ -92,6 +105,8 @@ public class PairedDevices extends AppCompatActivity {
         Typeface as=Typeface.createFromAsset(getAssets(),"android.ttf");
         TextView fd=(TextView)findViewById(R.id.fcuk_recycle);
         fd.setTypeface(as);
+        sharedPreferences = getSharedPreferences(Constants.sharedPrefernce3, Context.MODE_PRIVATE);
+        editor = sharedPreferences.edit();
     }
 
 
@@ -118,7 +133,8 @@ public class PairedDevices extends AppCompatActivity {
     }
 
     private void Display(final String s){
-  new Handler().post(new Runnable() {
+        Handler handler = new Handler();
+        handler.post(new Runnable() {
        @Override
           public void run() {
             Toast.makeText(PairedDevices.this,s,Toast.LENGTH_SHORT).show();

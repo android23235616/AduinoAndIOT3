@@ -58,13 +58,14 @@ public class Registration extends AppCompatActivity {
                 checkSnapshot = dataSnapshot;
                 if (flag == 0 && flag2 == 0 ){
                     Display("Registered");
-                    handler.postDelayed(new Runnable() {
+                   /* handler.postDelayed(new Runnable() {
                         @Override
                         public void run() {
-                            startActivity(new Intent(Registration.this, PairedDevices.class));
+                            startActivity(new Intent(Registration.this, EmptyActivity.class));
                             finish();
                         }
-                    }, 300);
+                    }, 300);*/
+                    startActivity(new Intent(Registration.this, EmptyActivity.class));
                 }
             }
 
@@ -100,7 +101,7 @@ public class Registration extends AppCompatActivity {
         if(!checker.equals("")){
            startActivity(new Intent(this,PairedDevices.class));
             finish();
-            return false;
+            return true;
         }else
             return false;
     }

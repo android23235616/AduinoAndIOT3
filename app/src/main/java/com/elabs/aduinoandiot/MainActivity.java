@@ -28,6 +28,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.util.UUID;
 
 public class MainActivity extends AppCompatActivity {
@@ -51,6 +52,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Initialise();
+        Display(address);
         if(isFirstTime()){
             recreate();
             editor.putBoolean("first",true);
@@ -91,6 +93,8 @@ public class MainActivity extends AppCompatActivity {
             Display("Cant Read Database");
         }
 
+
+
     }
 
     private void SetUpConnectionSocket() throws IOException{
@@ -99,13 +103,20 @@ public class MainActivity extends AppCompatActivity {
         Thread t = new Thread(new Runnable() {
             @Override
             public void run() {
+                Log.i("23232323","I am here");
                 if(adapter!=null){
                     while(socket==null){
                         catchFlag=0;
                         try {
-                            socket = adapter.getRemoteDevice(address).createInsecureRfcommSocketToServiceRecord(uuid);
-                            socket.connect();
+                            Log.i("23232323","I am here2");
+                                    socket = adapter.getRemoteDevice(address).createInsecureRfcommSocketToServiceRecord(uuid);
+                            socket = (BluetoothSocket) BluetoothAdapter.getDefaultAdapter().
+                                    getRemoteDevice(address).getClass().
+                                    getMethod("createRfcommSocket", new Class[] {int.class}).invoke( adapter.getRemoteDevice(address),1);
+                                    socket.connect();
+
                         } catch (IOException e) {
+                            Log.i("23232323","I am here3");
                             e.printStackTrace();
                             Display(e.toString()+"\n"+"The  requested device doesn't have the desired service!");
                             catchFlag=1;
@@ -123,7 +134,13 @@ public class MainActivity extends AppCompatActivity {
                             }
 
                             break;
-                        }finally {
+                        } catch (NoSuchMethodException e) {
+                            e.printStackTrace();
+                        } catch (IllegalAccessException e) {
+                            e.printStackTrace();
+                        } catch (InvocationTargetException e) {
+                            e.printStackTrace();
+                        } finally {
                             flagRetry=1;
                             if(catchFlag==0)
                                 Display("Connected");
@@ -144,7 +161,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void sendData(int data) throws IOException{
-        socket.getOutputStream().write((data+"").getBytes());
+        if(socket!=null)
+            socket.getOutputStream().write((data+"").getBytes());
 
     }
 
@@ -155,7 +173,9 @@ public class MainActivity extends AppCompatActivity {
         {
             try {
                 socket = BluetoothAdapter.getDefaultAdapter().getRemoteDevice(address).createInsecureRfcommSocketToServiceRecord(uuid);
+               // socket = BluetoothAdapter.getDefaultAdapter().getRemoteDevice(address).getClass().getMethod("createRfcommSocket", new Class[] {int.class}).invoke(device,1);
                 socket.connect();
+             //   socket.connect();
             } catch (IOException e) {
                 e.printStackTrace();
                 Display(e.toString() + "\n" + "The  requested device doesn't have the desired service!");
@@ -213,7 +233,26 @@ public class MainActivity extends AppCompatActivity {
         name = sharedPreferences.getString("name","");
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Dialog.dismiss();
+    }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+        Dialog.dismiss();
+    }
 
-
+    @Override
+    public void onBackPressed(){
+        try {
+            socket.close();
+            finish();
+        } catch (IOException e) {
+            e.printStackTrace();
+            Display(e.toString());
+        }
+    }
 }
