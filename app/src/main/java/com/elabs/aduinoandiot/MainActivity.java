@@ -35,20 +35,27 @@ public class MainActivity extends AppCompatActivity {
     DatabaseReference reference;
     FirebaseDatabase firebaseDatabase;
     SharedPreferences sharedPreferences;
+    SharedPreferences.Editor editor;
     public  Intent getdata;
     public String address="",Url="";
     UUID uuid = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
     BluetoothSocket socket;
+    int flagRetry=0,catchFlag=0;
     TextView value;
     ProgressDialog Dialog;
     Handler handler;
-
+    int Retry=0;
     String name;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Initialise();
+        if(isFirstTime()){
+            recreate();
+            editor.putBoolean("first",true);
+            editor.commit();
+        }
         try {
             SetUpConnectionSocket();
         } catch (IOException e) {
@@ -94,13 +101,14 @@ public class MainActivity extends AppCompatActivity {
             public void run() {
                 if(adapter!=null){
                     while(socket==null){
+                        catchFlag=0;
                         try {
                             socket = adapter.getRemoteDevice(address).createInsecureRfcommSocketToServiceRecord(uuid);
                             socket.connect();
                         } catch (IOException e) {
                             e.printStackTrace();
                             Display(e.toString()+"\n"+"The  requested device doesn't have the desired service!");
-
+                            catchFlag=1;
                            handler.post(new Runnable() {
                                @Override
                                public void run() {
@@ -109,7 +117,16 @@ public class MainActivity extends AppCompatActivity {
                                }
                            });
 
+                            if(Retry<3){
+                                Display("Retrying "+(Retry+1)+"/"+"3");
+                                Retry();
+                            }
+
                             break;
+                        }finally {
+                            flagRetry=1;
+                            if(catchFlag==0)
+                                Display("Connected");
                         }
                     }
             handler.post(new Runnable() {
@@ -129,6 +146,41 @@ public class MainActivity extends AppCompatActivity {
     private void sendData(int data) throws IOException{
         socket.getOutputStream().write((data+"").getBytes());
 
+    }
+
+    private void Retry() {
+        catchFlag=0;
+        Retry++;
+        if(flagRetry==0)
+        {
+            try {
+                socket = BluetoothAdapter.getDefaultAdapter().getRemoteDevice(address).createInsecureRfcommSocketToServiceRecord(uuid);
+                socket.connect();
+            } catch (IOException e) {
+                e.printStackTrace();
+                Display(e.toString() + "\n" + "The  requested device doesn't have the desired service!");
+                catchFlag=1;
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        Dialog.cancel();
+
+                    }
+                });
+                if (Retry < 3) {
+                    Display("Retrying " + (Retry + 1) + "/" + "3");
+                    Retry();
+                }
+
+            }finally {
+                flagRetry=1;
+                if (catchFlag==0)
+                    Display("Connected");
+            }
+        }
+    }
+    private boolean isFirstTime(){
+        return sharedPreferences.getBoolean("first",false);
     }
 
     private void Display(final String msg){
@@ -157,6 +209,7 @@ public class MainActivity extends AppCompatActivity {
         handler = new Handler();
        sharedPreferences = getSharedPreferences(new Constants().sharedPreferenceConstant, Context.MODE_PRIVATE);
        // Display(address);
+        editor = sharedPreferences.edit();
         name = sharedPreferences.getString("name","");
     }
 
