@@ -100,7 +100,7 @@ public class Registration extends AppCompatActivity {
         if(!checker.equals("")){
            startActivity(new Intent(this,PairedDevices.class));
             finish();
-            return true;
+            return false;
         }else
             return false;
     }
