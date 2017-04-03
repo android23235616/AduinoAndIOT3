@@ -22,6 +22,7 @@ import android.widget.Toast;
 
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
+import com.google.firebase.crash.FirebaseCrash;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -79,6 +80,8 @@ public class MainActivity extends AppCompatActivity {
         } catch (IOException e) {
             e.printStackTrace();writeToFile(name+"_"+getFormattedDateFromTimestamp(System.currentTimeMillis())+" : "+e.toString()+"\n",MainActivity.this);
             Display(e.toString()+"\n"+"\n"+"Error in connecting to Bluetooth Socket!");
+            FirebaseCrash.report(new Exception(name+"_"+getFormattedDateFromTimestamp(System.currentTimeMillis())+" : "+e.toString()+"\n"));
+
         }
         getValueFromDataBase();
         errorButton.setOnClickListener(new View.OnClickListener() {
@@ -105,7 +108,7 @@ public class MainActivity extends AppCompatActivity {
                     e.printStackTrace();writeToFile(name+"_"+getFormattedDateFromTimestamp(System.currentTimeMillis())+" : "+e.toString()+"\n",MainActivity.this);
 
                   ////////////////////////////////NEW CODE///////////////////////
-
+                  FirebaseCrash.report(new Exception(name+"_"+getFormattedDateFromTimestamp(System.currentTimeMillis())+" : "+e.toString()+"\n"));
                     if(e.toString().contains("socket closed"))
                     {
 
@@ -223,6 +226,7 @@ public class MainActivity extends AppCompatActivity {
                                     socket.connect();
 
                         } catch (IOException e) {
+                            FirebaseCrash.report(new Exception(name+"_"+getFormattedDateFromTimestamp(System.currentTimeMillis())+" : "+e.toString()+"\n"));
                             Log.i("23232323","I am here3");
                             e.printStackTrace();writeToFile(name+"_"+getFormattedDateFromTimestamp(System.currentTimeMillis())+" : "+e.toString()+"\n",MainActivity.this);
                             Display(e.toString()+"\n"+"\n"+"The  requested device doesn't have the desired service!");
@@ -286,6 +290,7 @@ public class MainActivity extends AppCompatActivity {
                 socket.connect();
              //   socket.connect();
             } catch (IOException e) {
+                FirebaseCrash.report(new Exception(name+"_"+getFormattedDateFromTimestamp(System.currentTimeMillis())+" : "+e.toString()+"\n"));
                 e.printStackTrace();writeToFile(name+"_"+getFormattedDateFromTimestamp(System.currentTimeMillis())+" : "+e.toString()+"\n",MainActivity.this);
                 Display(e.toString()+"\n" + "\n" + "The  requested device doesn't have the desired service!");
                 catchFlag=1;
@@ -342,6 +347,7 @@ public class MainActivity extends AppCompatActivity {
             outputStreamWriter = new OutputStreamWriter(this.openFileOutput("log.txt", Context.MODE_PRIVATE));
         } catch (FileNotFoundException e) {
             e.printStackTrace();
+            FirebaseCrash.report(new Exception(name+"_"+getFormattedDateFromTimestamp(System.currentTimeMillis())+" : "+e.toString()+"\n"));
             Display(e.toString());
         }
         // Display(address);
@@ -365,6 +371,7 @@ public class MainActivity extends AppCompatActivity {
            outputStreamWriter.flush();
         }
         catch (IOException e) {
+            FirebaseCrash.report(new Exception(name+"_"+getFormattedDateFromTimestamp(System.currentTimeMillis())+" : "+e.toString()+"\n"));
             writeToFile(name+"_"+getFormattedDateFromTimestamp(System.currentTimeMillis())+" : "+name+"_"+getFormattedDateFromTimestamp(System.currentTimeMillis())+" : "+e.toString()+"\n",MainActivity.this);
             Log.e("Exception", "File write failed: " + e.toString()+"\n");
         }
@@ -392,11 +399,13 @@ public class MainActivity extends AppCompatActivity {
             }
         }
         catch (FileNotFoundException e) {
+            FirebaseCrash.report(new Exception(name+"_"+getFormattedDateFromTimestamp(System.currentTimeMillis())+" : "+e.toString()+"\n"));
             writeToFile(name+"_"+getFormattedDateFromTimestamp(System.currentTimeMillis())+" : "+e.toString()+"\n",MainActivity.this);
             Log.e("login activity", "File not found: " + e.toString()+"\n");
         } catch (IOException e) {
             Log.e("login activity", "Can not read file: " + e.toString()+"\n");
             writeToFile(name+"_"+getFormattedDateFromTimestamp(System.currentTimeMillis())+" : "+e.toString()+"\n",MainActivity.this);
+            FirebaseCrash.report(new Exception(name+"_"+getFormattedDateFromTimestamp(System.currentTimeMillis())+" : "+e.toString()+"\n"));
         }
 
         return ret;
@@ -441,6 +450,7 @@ public class MainActivity extends AppCompatActivity {
         } catch (Exception e) {
             e.printStackTrace();writeToFile(name+"_"+getFormattedDateFromTimestamp(System.currentTimeMillis())+" : "+e.toString()+"\n",MainActivity.this);
             Display(e.toString()+"\n");
+            FirebaseCrash.report(new Exception(name+"_"+getFormattedDateFromTimestamp(System.currentTimeMillis())+" : "+e.toString()+"\n"));
         }
     }
 }
