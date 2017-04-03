@@ -66,6 +66,7 @@ public class Registration extends AppCompatActivity {
                         }
                     }, 300);*/
                     startActivity(new Intent(Registration.this, EmptyActivity.class));
+                    finish();
                 }
             }
 

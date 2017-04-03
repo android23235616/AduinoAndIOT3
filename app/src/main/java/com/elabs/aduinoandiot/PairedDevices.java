@@ -78,6 +78,12 @@ public class PairedDevices extends AppCompatActivity {
     }
 
     @Override
+    public void onPause(){
+        super.onPause();
+        finish();
+    }
+
+    @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if(requestCode==13)
         {

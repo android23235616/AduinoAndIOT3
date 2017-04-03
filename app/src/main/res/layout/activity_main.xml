@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout
+<LinearLayout
+
     android:background="@color/background"
     android:orientation="vertical"
     xmlns:android="http://schemas.android.com/apk/res/android"
@@ -10,20 +11,54 @@
     android:layout_height="match_parent"
     tools:context="com.elabs.aduinoandiot.MainActivity">
 
-    <TextView
 
+    <TextView
+        android:layout_margin="100dp"
         android:textColor="#ffffff"
        android:layout_gravity="center"
         android:padding="35dp"
         android:textStyle="bold"
         android:background="@drawable/button3"
         android:textSize="30dp"
-        android:layout_width="wrap_content"
+        android:layout_width="341dp"
         android:layout_height="wrap_content"
         android:text="T h e  v a l u e  i s   0"
         android:id="@+id/value"
      />
 
+    <FrameLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
 
+    <ScrollView
 
-</FrameLayout>
+        android:layout_marginTop="50dp"
+        android:layout_gravity="center_vertical|left"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="10dp">
+
+        <TextView
+
+            android:textColor="#ffffff"
+
+            android:padding="35dp"
+            android:textStyle="bold"
+            android:textSize="10dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text=""
+            android:id="@+id/history"
+            />
+    </ScrollView>
+
+<android.support.design.widget.FloatingActionButton
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_gravity="right"
+    android:id="@+id/errorButton"
+    android:layout_marginLeft="280dp"
+    android:foreground="@drawable/ic_error_outline_white_48dp"
+    android:layout_marginTop="180dp"/>
+    </FrameLayout>
+</LinearLayout>

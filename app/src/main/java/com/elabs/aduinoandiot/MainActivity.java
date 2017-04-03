@@ -7,7 +7,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Typeface;
+import android.net.Uri;
 import android.os.Handler;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -27,8 +29,15 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.lang.reflect.InvocationTargetException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.UUID;
 
 public class MainActivity extends AppCompatActivity {
@@ -37,6 +46,8 @@ public class MainActivity extends AppCompatActivity {
     FirebaseDatabase firebaseDatabase;
     SharedPreferences sharedPreferences;
     SharedPreferences.Editor editor;
+    Profile errorProfile;
+    OutputStreamWriter outputStreamWriter;
     public  Intent getdata;
     public String address="",Url="";
     UUID uuid = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB");
@@ -46,6 +57,10 @@ public class MainActivity extends AppCompatActivity {
     ProgressDialog Dialog;
     Handler handler;
     int Retry=0;
+    FloatingActionButton errorButton;
+    int retrySuccess=0;
+    long GlobalTime=0;
+    TextView history;
     String name;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,13 +74,20 @@ public class MainActivity extends AppCompatActivity {
             editor.commit();
         }
         try {
+            socket=null;
             SetUpConnectionSocket();
         } catch (IOException e) {
-            e.printStackTrace();
-            Display(e.toString()+"\n"+"Error in connecting to Bluetooth Socket!");
+            e.printStackTrace();writeToFile(name+"_"+getFormattedDateFromTimestamp(System.currentTimeMillis())+" : "+e.toString()+"\n",MainActivity.this);
+            Display(e.toString()+"\n"+"\n"+"Error in connecting to Bluetooth Socket!");
         }
         getValueFromDataBase();
-
+        errorButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String msg = readFromFile(MainActivity.this);
+                sendMail(msg);
+            }
+        });
     }
 
     private void getValueFromDataBase(){
@@ -73,14 +95,44 @@ public class MainActivity extends AppCompatActivity {
         { reference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                Display("Data has changed");
+
                 Profile p = dataSnapshot.child(name).getValue(Profile.class);
                 value.setText("T h e  v a l u e  i s  "+p.getValue());
               try {
                     sendData(p.getValue());
+                  history.append(name+" @ "+convertSecondsToHMmSs(System.currentTimeMillis())+": "+p.getValue()+"\n");
                 } catch (IOException e) {
-                    e.printStackTrace();
-                    Display(e.toString());
+                    e.printStackTrace();writeToFile(name+"_"+getFormattedDateFromTimestamp(System.currentTimeMillis())+" : "+e.toString()+"\n",MainActivity.this);
+
+                  ////////////////////////////////NEW CODE///////////////////////
+
+                    if(e.toString().contains("socket closed"))
+                    {
+
+                    }else if(e.toString().contains("Broken pipe")){
+                        Display("broken pipe. Reconnecting");
+                        writeToFile(name+"_"+getFormattedDateFromTimestamp(System.currentTimeMillis())+" : "+e.toString()+"\n",MainActivity.this);
+                        Retry=0;
+                        try {
+                            SetUpConnectionSocket();
+                        } catch (IOException e1) {
+                            e1.printStackTrace();writeToFile(name+"_"+getFormattedDateFromTimestamp(System.currentTimeMillis())+" : "+e.toString()+"\n",MainActivity.this);
+
+                            Display(e.toString()+"\n");
+                        }finally
+                        {
+                            try {
+                               // RestablishingConnection(p);
+                            } catch (Exception e1) {
+                                e1.printStackTrace();writeToFile(name+"_"+getFormattedDateFromTimestamp(System.currentTimeMillis())+" : "+e.toString()+"\n",MainActivity.this);
+                                Display(e1.toString());
+                            }
+                        }
+                    }else{
+                        Display(e.toString()+"\n");
+                    }
+
+                  ////////////////////////////////////HERE///////////////////////////////
                 }
             }
 
@@ -97,6 +149,61 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    public static String convertSecondsToHMmSs(long seconds) {
+        long s = seconds % 60;
+        long m = (seconds / 60) % 60;
+        long h = (seconds / (60 * 60)) % 24;
+        return String.format("%d:%02d:%02d", h,m,s);
+    }
+///////////////////////////////////EXTRA FUNCTION
+    private void RestablishingConnection(final Profile p) throws Exception{
+
+       /* if(errorProfile!=null){
+            if(errorProfile!=p){
+                retrySuccess=100;
+                Log.i("asdfgh",retrySuccess+"");
+            }
+            Log.i("rest","received error profile "+retrySuccess);
+        }*/
+
+       Thread t = new Thread(new Runnable() {
+           @Override
+           public void run() {
+
+               while(retrySuccess!=100){
+                   try {
+                       sendData(p.getValue());
+                   } catch (IOException e) {
+                       e.printStackTrace();writeToFile(name+"_"+getFormattedDateFromTimestamp(System.currentTimeMillis())+" : "+e.toString()+"\n",MainActivity.this);
+                   }
+                   try {
+                       Thread.sleep(1000);
+                   } catch (InterruptedException e) {
+                       e.printStackTrace();writeToFile(name+"_"+getFormattedDateFromTimestamp(System.currentTimeMillis())+" : "+e.toString()+"\n",MainActivity.this);
+                   }
+                   Log.i("running","running");
+                   if(errorProfile!=null){
+                       if(errorProfile!=p){
+
+                           Log.i("asdfgh",retrySuccess+"");
+                           break;
+                       }
+                       Log.i("rest","received error profile "+retrySuccess);
+                   }
+               }
+               GlobalTime=0;
+               retrySuccess=0;
+           }
+       });
+
+        if(GlobalTime<1){
+            GlobalTime++;
+            t.start();
+            errorProfile=p;
+            Log.i("andr","Thread Started");
+        }
+    }
+///////////////////////////////////////////////
     private void SetUpConnectionSocket() throws IOException{
         final BluetoothAdapter adapter = BluetoothAdapter.getDefaultAdapter();
           socket = null;
@@ -117,8 +224,8 @@ public class MainActivity extends AppCompatActivity {
 
                         } catch (IOException e) {
                             Log.i("23232323","I am here3");
-                            e.printStackTrace();
-                            Display(e.toString()+"\n"+"The  requested device doesn't have the desired service!");
+                            e.printStackTrace();writeToFile(name+"_"+getFormattedDateFromTimestamp(System.currentTimeMillis())+" : "+e.toString()+"\n",MainActivity.this);
+                            Display(e.toString()+"\n"+"\n"+"The  requested device doesn't have the desired service!");
                             catchFlag=1;
                            handler.post(new Runnable() {
                                @Override
@@ -135,15 +242,18 @@ public class MainActivity extends AppCompatActivity {
 
                             break;
                         } catch (NoSuchMethodException e) {
-                            e.printStackTrace();
+                            e.printStackTrace();writeToFile(name+"_"+getFormattedDateFromTimestamp(System.currentTimeMillis())+" : "+e.toString()+"\n",MainActivity.this);
                         } catch (IllegalAccessException e) {
-                            e.printStackTrace();
+                            e.printStackTrace();writeToFile(name+"_"+getFormattedDateFromTimestamp(System.currentTimeMillis())+" : "+e.toString()+"\n",MainActivity.this);
                         } catch (InvocationTargetException e) {
-                            e.printStackTrace();
+                            e.printStackTrace();writeToFile(name+"_"+getFormattedDateFromTimestamp(System.currentTimeMillis())+" : "+e.toString()+"\n",MainActivity.this);
                         } finally {
                             flagRetry=1;
-                            if(catchFlag==0)
+                            if(catchFlag==0) {
                                 Display("Connected");
+
+                            }
+
                         }
                     }
             handler.post(new Runnable() {
@@ -161,9 +271,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void sendData(int data) throws IOException{
-        if(socket!=null)
+        if(socket!=null&&socket.getOutputStream()!=null)
             socket.getOutputStream().write((data+"").getBytes());
-
     }
 
     private void Retry() {
@@ -177,8 +286,8 @@ public class MainActivity extends AppCompatActivity {
                 socket.connect();
              //   socket.connect();
             } catch (IOException e) {
-                e.printStackTrace();
-                Display(e.toString() + "\n" + "The  requested device doesn't have the desired service!");
+                e.printStackTrace();writeToFile(name+"_"+getFormattedDateFromTimestamp(System.currentTimeMillis())+" : "+e.toString()+"\n",MainActivity.this);
+                Display(e.toString()+"\n" + "\n" + "The  requested device doesn't have the desired service!");
                 catchFlag=1;
                 handler.post(new Runnable() {
                     @Override
@@ -215,7 +324,7 @@ public class MainActivity extends AppCompatActivity {
     private void Initialise(){
          firebaseDatabase = FirebaseDatabase.getInstance(FirebaseApp.getInstance());
        // reference = FirebaseDatabase.getInstance(Fireb).getReference();
-
+        history = (TextView)findViewById(R.id.history);
         reference = FirebaseDatabase.getInstance().getReference("Profile");
         getdata = getIntent();
         address = getdata.getStringExtra("mac");
@@ -226,17 +335,94 @@ public class MainActivity extends AppCompatActivity {
         Typeface as=Typeface.createFromAsset(getAssets(),"android.ttf");
         progress_id.setTypeface(as);
         Dialog.setContentView(v);
+        errorButton = (FloatingActionButton)findViewById(R.id.errorButton);
         handler = new Handler();
        sharedPreferences = getSharedPreferences(new Constants().sharedPreferenceConstant, Context.MODE_PRIVATE);
-       // Display(address);
+        try {
+            outputStreamWriter = new OutputStreamWriter(this.openFileOutput("log.txt", Context.MODE_PRIVATE));
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+            Display(e.toString());
+        }
+        // Display(address);
         editor = sharedPreferences.edit();
         name = sharedPreferences.getString("name","");
+       
     }
 
+    private void sendMail(String body){
+        Intent emailIntent = new Intent(Intent.ACTION_SENDTO, Uri.fromParts(
+                "mailto","majumdartanmay68@gmail.com", null));
+        emailIntent.putExtra(Intent.EXTRA_SUBJECT, "Error Log For AduinoIot");
+        emailIntent.putExtra(Intent.EXTRA_TEXT, body);
+        startActivity(Intent.createChooser(emailIntent, "Send email..."));
+    }
+
+    private void writeToFile(String data,Context context) {
+        try {
+
+            outputStreamWriter.append(data+"\n");
+           outputStreamWriter.flush();
+        }
+        catch (IOException e) {
+            writeToFile(name+"_"+getFormattedDateFromTimestamp(System.currentTimeMillis())+" : "+name+"_"+getFormattedDateFromTimestamp(System.currentTimeMillis())+" : "+e.toString()+"\n",MainActivity.this);
+            Log.e("Exception", "File write failed: " + e.toString()+"\n");
+        }
+    }
+
+    private String readFromFile(Context context) {
+
+        String ret = "";
+
+        try {
+            InputStream inputStream = context.openFileInput("log.txt");
+
+            if ( inputStream != null ) {
+                InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
+                BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+                String receiveString = "";
+                StringBuilder stringBuilder = new StringBuilder();
+
+                while ( (receiveString = bufferedReader.readLine()) != null ) {
+                    stringBuilder.append(receiveString+"\n");
+                }
+
+                inputStream.close();
+                ret = stringBuilder.toString();
+            }
+        }
+        catch (FileNotFoundException e) {
+            writeToFile(name+"_"+getFormattedDateFromTimestamp(System.currentTimeMillis())+" : "+e.toString()+"\n",MainActivity.this);
+            Log.e("login activity", "File not found: " + e.toString()+"\n");
+        } catch (IOException e) {
+            Log.e("login activity", "Can not read file: " + e.toString()+"\n");
+            writeToFile(name+"_"+getFormattedDateFromTimestamp(System.currentTimeMillis())+" : "+e.toString()+"\n",MainActivity.this);
+        }
+
+        return ret;
+    }
+
+   
+        public static String getFormattedDateFromTimestamp(long timestampInMilliSeconds)
+        {
+            Date date = new Date();
+            date.setTime(timestampInMilliSeconds);
+            String formattedDate=new SimpleDateFormat("MMM d, yyyy").format(date);
+            return formattedDate;
+
+        }
+    
+    
     @Override
     protected void onDestroy() {
         super.onDestroy();
         Dialog.dismiss();
+        try {
+            outputStreamWriter.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
     }
 
     @Override
@@ -249,10 +435,12 @@ public class MainActivity extends AppCompatActivity {
     public void onBackPressed(){
         try {
             socket.close();
+           // socket=null;
+            startActivity(new Intent(this,PairedDevices.class));
             finish();
-        } catch (IOException e) {
-            e.printStackTrace();
-            Display(e.toString());
+        } catch (Exception e) {
+            e.printStackTrace();writeToFile(name+"_"+getFormattedDateFromTimestamp(System.currentTimeMillis())+" : "+e.toString()+"\n",MainActivity.this);
+            Display(e.toString()+"\n");
         }
     }
 }
