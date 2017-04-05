@@ -9,6 +9,7 @@ import android.content.SharedPreferences;
 import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Handler;
+import android.os.PowerManager;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -63,6 +64,8 @@ public class MainActivity extends AppCompatActivity {
     long GlobalTime=0;
     TextView history;
     String name;
+    PowerManager pwm;
+    PowerManager.WakeLock wakeLock;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -332,6 +335,9 @@ public class MainActivity extends AppCompatActivity {
         history = (TextView)findViewById(R.id.history);
         reference = FirebaseDatabase.getInstance().getReference("Profile");
         getdata = getIntent();
+        pwm  = (PowerManager)getSystemService(POWER_SERVICE);
+        wakeLock = pwm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK,"My Tag");
+
         address = getdata.getStringExtra("mac");
         value = (TextView)findViewById(R.id.value);
         Dialog = ProgressDialog.show(this,"Connecting","Please Wait");
@@ -421,7 +427,38 @@ public class MainActivity extends AppCompatActivity {
 
         }
     
-    
+    @Override
+    public void onStop(){
+        super.onStop();
+      /*  synchronized (wakeLock.isHeld()) {
+            // sanity check for null as this is a public method
+            if (wakeLock != null) {
+                Log.v("My WakeLog", "Releasing wakelock");
+                FirebaseCrash.log("Releasing wakelock");
+                try {
+                    wakeLock.release();
+                } catch (Throwable th) {
+                    // ignoring this exception, probably wakeLock was already released
+                }
+            } else {
+                // should never happen during normal workflow
+                Log.e("My Tag", "Wakelock reference is null");
+                FirebaseCrash.log(" wakelock is null");
+            }
+        }*/
+        //if (wakeLock.isHeld())
+          //  wakeLock.release();
+        Log.i("stopOn","On Stop Called");
+    }
+
+    @Override
+    public void onResume(){
+        super.onResume();
+        Log.i("resumed","resumed");
+        if(wakeLock.isHeld())
+        wakeLock.release();
+    }
+
     @Override
     protected void onDestroy() {
         super.onDestroy();
@@ -438,6 +475,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onPause() {
         super.onPause();
         Dialog.dismiss();
+        wakeLock.acquire();
     }
 
     @Override
