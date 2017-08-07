@@ -81,6 +81,7 @@ public class Registration extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 name = Username.getText().toString();
+                if(name.length()>=1){
                 String pass = password.getText().toString();
                 editor.putString("name", name);
                 editor.putString("pass", pass);
@@ -90,6 +91,8 @@ public class Registration extends AppCompatActivity {
                     flag2 = 0;
                     dialog.show();
                     setUpFirebase(profile);
+                }}else{
+                    Display("Username too short.");
                 }
 
             }
@@ -166,6 +169,7 @@ public class Registration extends AppCompatActivity {
     private void setUpFirebase(Profile p1){
 
         databaseReference.child(p1.getId()).setValue(p1);
+
 
     }
 
